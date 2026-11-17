@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "craftwright:block/advanced_crafter"
+  }
+}

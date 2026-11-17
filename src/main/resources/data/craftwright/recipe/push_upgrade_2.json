@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    " M ",
+    "RUR",
+    " M "
+  ],
+  "key": {
+    "M": "#c:ingots/iron",
+    "R": "minecraft:redstone",
+    "U": "craftwright:push_upgrade_1"
+  },
+  "result": {
+    "id": "craftwright:push_upgrade_2",
+    "count": 1
+  }
+}

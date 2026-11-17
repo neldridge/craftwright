@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "craftwright:item/speed_upgrade"
+  }
+}

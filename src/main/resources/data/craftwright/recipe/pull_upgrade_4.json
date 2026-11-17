@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    " M ",
+    "RUR",
+    " M "
+  ],
+  "key": {
+    "M": "#c:gems/diamond",
+    "R": "minecraft:redstone",
+    "U": "craftwright:pull_upgrade_3"
+  },
+  "result": {
+    "id": "craftwright:pull_upgrade_4",
+    "count": 1
+  }
+}

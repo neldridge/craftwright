@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    " M ",
+    "RUR",
+    " M "
+  ],
+  "key": {
+    "M": "#c:ingots/gold",
+    "R": "minecraft:redstone",
+    "U": "craftwright:pull_upgrade_2"
+  },
+  "result": {
+    "id": "craftwright:pull_upgrade_3",
+    "count": 1
+  }
+}

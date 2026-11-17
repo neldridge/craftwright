@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "CRC",
+    " P "
+  ],
+  "key": {
+    "C": "#c:ingots/copper",
+    "R": "minecraft:redstone",
+    "P": "minecraft:hopper"
+  },
+  "result": {
+    "id": "craftwright:pull_upgrade_1",
+    "count": 1
+  }
+}

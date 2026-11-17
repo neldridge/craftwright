@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "IRI",
+    "CTC",
+    "IRI"
+  ],
+  "key": {
+    "I": "#c:ingots/iron",
+    "R": "minecraft:redstone",
+    "C": "#c:ingots/copper",
+    "T": "minecraft:crafting_table"
+  },
+  "result": {
+    "id": "craftwright:crafter",
+    "count": 1
+  }
+}

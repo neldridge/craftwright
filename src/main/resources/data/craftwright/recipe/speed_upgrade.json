@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    " R ",
+    "SCS",
+    " R "
+  ],
+  "key": {
+    "R": "minecraft:redstone",
+    "S": "minecraft:sugar",
+    "C": "#c:ingots/copper"
+  },
+  "result": {
+    "id": "craftwright:speed_upgrade",
+    "count": 1
+  }
+}

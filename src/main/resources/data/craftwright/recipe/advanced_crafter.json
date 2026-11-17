@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "CDC",
+    "QBQ",
+    "CDC"
+  ],
+  "key": {
+    "C": "craftwright:crafter",
+    "D": "#c:gems/diamond",
+    "Q": "minecraft:quartz_block",
+    "B": "minecraft:blaze_rod"
+  },
+  "result": {
+    "id": "craftwright:advanced_crafter",
+    "count": 1
+  }
+}
