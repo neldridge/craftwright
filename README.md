@@ -1,6 +1,6 @@
 # Craftwright
 
-FE-powered autocrafting for **Minecraft Java 26.1 / NeoForge**.
+FE-powered autocrafting for **Minecraft Java 26.1.2 / NeoForge**.
 
 | | Crafter | Advanced Crafter |
 |---|---:|---:|
@@ -60,7 +60,7 @@ Requires **JDK 25**. Versions are pinned in `gradle.properties`; the official Ne
 ./gradlew runGameTestServer -PgameTests
 ```
 
-The first run downloads Minecraft, NeoForge, and development assets. The built mod is `build/libs/craftwright-0.1.0.jar`; install it on both clients and servers. A local JDK, if provisioned by the workspace, lives under ignored `.tooling/`; it is not required at that location on other machines.
+The first run downloads Minecraft, NeoForge, and development assets. The built mod is `build/libs/craftwright-0.1.1.jar`; install it on both clients and servers. A local JDK, if provisioned by the workspace, lives under ignored `.tooling/`; it is not required at that location on other machines.
 
 GameTests live in a separate source set and are excluded from the mod JAR. They exercise crafting timing, speed and pattern upgrades, output blockage, container returns, energy loss, invalid output overrides, all side modes and cached capabilities, fair recipe scheduling, save/reload, ghost inventory safety, and powered transfers into/out of vanilla inventories. `build` compiles these tests; `runGameTestServer -PgameTests` executes them.
 
