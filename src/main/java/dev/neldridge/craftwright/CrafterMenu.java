@@ -74,9 +74,10 @@ public class CrafterMenu extends AbstractContainerMenu {
         addDataSlots(data);
         if (server) loadPattern(0);
     }
-    private Slot ghost(SimpleContainer inventory, int index, int x, int y) {
-        return new Slot(inventory, index, x, y) {
-            @Override public boolean isActive() { return view == 0 && inventory != remainders && (inventory != previews || index < tier.maxPatterns); }
+    private Slot ghost(SimpleContainer inventory, int containerIndex, int x, int y) {
+        return new Slot(inventory, containerIndex, x, y) {
+            // Slot.index is the overall menu index, not the index in the preview container.
+            @Override public boolean isActive() { return view == 0 && inventory != remainders && (inventory != previews || containerIndex < tier.maxPatterns); }
             @Override public boolean mayPickup(Player player) { return false; }
             @Override public boolean mayPlace(ItemStack stack) { return false; }
         };

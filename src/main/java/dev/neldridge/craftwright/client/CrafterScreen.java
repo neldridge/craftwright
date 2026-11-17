@@ -35,7 +35,7 @@ public class CrafterScreen extends AbstractContainerScreen<CrafterMenu> {
         add = button(12, 116, 72, "add", CrafterMenu.ADD);
         save = button(106, 116, 48, "save", CrafterMenu.SAVE);
         delete = button(158, 116, 48, "delete", CrafterMenu.DELETE);
-        auto = button(178, 99, 45, "auto", CrafterMenu.AUTO_OUTPUT);
+        auto = button(210, 116, 45, "auto", CrafterMenu.AUTO_OUTPUT);
         auto.setTooltip(Tooltip.create(text("auto_tooltip")));
         toggle = button(238, 6, 80, "enabled", CrafterMenu.TOGGLE);
         for (Direction side : Direction.values()) {

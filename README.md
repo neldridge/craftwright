@@ -67,6 +67,6 @@ The first run downloads Minecraft, NeoForge, and development assets. The built m
 
 GameTests live in a separate source set and are excluded from the mod JAR. They exercise crafting timing, speed and pattern upgrades, output blockage, container returns, energy loss, invalid output overrides, all side modes and cached capabilities, fair recipe scheduling, save/reload, ghost inventory safety, powered transfers into/out of vanilla inventories, and validated recipe imports (including packet encoding and rejected stale/invalid requests). `build` compiles these tests; `runGameTestServer -PgameTests` executes them.
 
-The initial block/item models reference vanilla textures as placeholders. Custom artwork and additional recipe-viewer integrations can be added independently.
+Machines use custom 16×16 pixel textures and framed block models: copper workshop casing for the Crafter, dark steel and cyan circuitry for the Advanced Crafter. Upgrade chips have distinct speed, pattern, pull, and push symbols; transfer tiers use copper, silver, gold, and diamond colors plus one to four tier marks. Regenerate the artwork and models with `python3 scripts/generate_assets.py`; a texture contact sheet is written to `build/art-preview/textures.png`.
 
 License: All rights reserved, pending the author's license choice. The original NeoForge template license is retained in `TEMPLATE_LICENSE.txt`.
