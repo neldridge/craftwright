@@ -16,6 +16,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew build
       - run: ./gradlew runGameTestServer -PgameTests
+      - run: ./gradlew runGameTestServer -PgameTests -PwithoutJei
       - uses: actions/upload-artifact@v4
         with:
           name: craftwright

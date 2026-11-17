@@ -9,6 +9,24 @@ group = mod_group_id
 base { archivesName = mod_id }
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
+repositories {
+    maven { url = 'https://maven.blamejared.com' }
+}
+
+configurations {
+    localRuntime
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+dependencies {
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    // Present in development clients; never bundled or required on dedicated servers.
+    if (!providers.gradleProperty('withoutJei').isPresent()) {
+        localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    }
+}
+
 sourceSets {
     gameTest {
         compileClasspath += sourceSets.main.output

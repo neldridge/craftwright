@@ -110,6 +110,24 @@ public class CrafterMenu extends AbstractContainerMenu {
             for (int i = 0; i < returned.size() && i < 9; i++) remainders.setItem(i, returned.get(i));
         }
     }
+    /** Apply a recipe-viewer transfer to the draft only. Real inventories and saved patterns are untouched. */
+    public boolean importPattern(Player sender, int pattern, net.minecraft.resources.Identifier recipeId, List<ItemStack> ingredients) {
+        if (sender != player || !stillValid(sender) || !(sender.level() instanceof ServerLevel level)
+            || pattern != selected || pattern < 0 || pattern >= machine.capacity() || ingredients.size() != 9) return false;
+        var key = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, recipeId);
+        var holder = level.recipeAccess().byKey(key).orElse(null);
+        if (holder == null || !(holder.value() instanceof CraftingRecipe recipe)) return false;
+        List<ItemStack> grid = ingredients.stream().map(s -> s.isEmpty() ? ItemStack.EMPTY : s.copyWithCount(1)).toList();
+        var input = CraftingInput.of(3, 3, grid);
+        if (!recipe.matches(input, level)) return false;
+        ItemStack result = recipe.assemble(input);
+        if (result.isEmpty()) return false;
+        for (int i = 0; i < 9; i++) draft.setItem(i, grid.get(i));
+        draft.setItem(9, result);
+        updateDraft(false);
+        broadcastChanges();
+        return valid == 1;
+    }
     @Override public void broadcastChanges() {
         if (player.level() instanceof ServerLevel) {
             for (int i = 0; i < 12; i++) previews.setItem(i, machine.patternStack(i, 9));

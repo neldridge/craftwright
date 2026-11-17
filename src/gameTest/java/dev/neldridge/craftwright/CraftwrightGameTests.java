@@ -1,6 +1,7 @@
 package dev.neldridge.craftwright;
 
 import java.util.*;
+import dev.neldridge.craftwright.network.PatternTransferPayload;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -149,6 +150,54 @@ public final class CraftwrightGameTests {
             check(h, count(be.inputs, Items.OAK_LOG) == 8 && count(be.outputs, Items.OAK_PLANKS) == 3, "Transfers stop without power");
             h.succeed();
         });
+        tests.put("recipe_transfer_without_items_fills_only_draft", h -> {
+            var be = machine(h, false); var player = editorPlayer(h, be);
+            var menu = new CrafterMenu(7, player.getInventory(), be); player.containerMenu = menu;
+            var grid = empty(); grid.set(4, new ItemStack(Items.OAK_LOG, 64));
+            var packet = new PatternTransferPayload(7, 1, 0, Identifier.withDefaultNamespace("oak_planks"), grid);
+            check(h, packet.apply(player), "Recipe transfers without possessing ingredients");
+            check(h, menu.getSlot(CrafterMenu.DRAFT_START + 4).getItem().getCount() == 1, "Ghost ingredient counts normalize to one");
+            check(h, menu.getSlot(CrafterMenu.DRAFT_START + 9).getItem().is(Items.OAK_PLANKS)
+                && menu.getSlot(CrafterMenu.DRAFT_START + 9).getItem().getCount() == 4, "Server supplies the authoritative recipe output");
+            check(h, be.patternStack(0, 9).isEmpty() && count(be.inputs, Items.OAK_LOG) == 0, "Import changes neither saved patterns nor real inventory");
+            check(h, menu.clickMenuButton(player, CrafterMenu.SAVE) && be.patternStack(0, 9).getCount() == 4, "Imported draft can be saved normally"); h.succeed();
+        });
+        tests.put("recipe_transfer_preserves_shaped_grid_and_clears_old_cells", h -> {
+            var be = machine(h, true); var player = editorPlayer(h, be);
+            var menu = new CrafterMenu(8, player.getInventory(), be); player.containerMenu = menu;
+            var shaped = empty();
+            for (int i : new int[]{1, 2, 4, 5}) shaped.set(i, new ItemStack(Items.OAK_PLANKS));
+            check(h, new PatternTransferPayload(8, 1, 0, Identifier.withDefaultNamespace("crafting_table"), shaped).apply(player), "Offset 2×2 shaped recipe imports correctly");
+            check(h, menu.getSlot(CrafterMenu.DRAFT_START).getItem().isEmpty() && menu.getSlot(CrafterMenu.DRAFT_START + 5).getItem().is(Items.OAK_PLANKS), "Recipe positioning and empty cells are retained");
+            var shapeless = empty(); shapeless.set(4, new ItemStack(Items.SUGAR_CANE));
+            check(h, new PatternTransferPayload(8, 2, 0, Identifier.withDefaultNamespace("sugar_from_sugar_cane"), shapeless).apply(player), "Shapeless recipe imports correctly");
+            check(h, menu.getSlot(CrafterMenu.DRAFT_START + 5).getItem().isEmpty() && menu.getSlot(CrafterMenu.DRAFT_START + 9).getItem().is(Items.SUGAR), "A new transfer clears the previous draft"); h.succeed();
+        });
+        tests.put("recipe_transfer_rejects_stale_and_invalid_requests", h -> {
+            var be = machine(h, false); logPattern(be, 0); var player = editorPlayer(h, be);
+            var menu = new CrafterMenu(9, player.getInventory(), be); player.containerMenu = menu;
+            var grid = empty(); grid.set(0, new ItemStack(Items.OAK_LOG));
+            check(h, !new PatternTransferPayload(8, 1, 0, Identifier.withDefaultNamespace("oak_planks"), grid).apply(player), "Stale menu IDs are rejected");
+            check(h, !new PatternTransferPayload(9, 2, 1, Identifier.withDefaultNamespace("oak_planks"), grid).apply(player), "Locked or changed pattern selection is rejected");
+            check(h, !new PatternTransferPayload(9, 3, 0, Identifier.withDefaultNamespace("diamond_block"), grid).apply(player), "Ingredients must match the requested recipe");
+            check(h, !new PatternTransferPayload(9, 4, 0, Identifier.withDefaultNamespace("nonexistent_recipe"), grid).apply(player), "Unknown recipes are rejected");
+            check(h, !new PatternTransferPayload(9, 5, 0, Identifier.withDefaultNamespace("oak_planks"), List.of()).apply(player), "Malformed grids are rejected");
+            player.setPos(be.getBlockPos().getX() + 100, be.getBlockPos().getY(), be.getBlockPos().getZ());
+            check(h, !new PatternTransferPayload(9, 6, 0, Identifier.withDefaultNamespace("oak_planks"), grid).apply(player), "Out-of-range requests are rejected");
+            check(h, menu.getSlot(CrafterMenu.DRAFT_START + 9).getItem().is(Items.OAK_PLANKS), "Rejected requests leave the draft intact"); h.succeed();
+        });
+        tests.put("recipe_transfer_payload_codec_round_trip", h -> {
+            var be = machine(h, false); var grid = empty(); grid.set(2, new ItemStack(Items.OAK_LOG));
+            var packet = new PatternTransferPayload(17, 42, 0, Identifier.withDefaultNamespace("oak_planks"), grid);
+            var buf = new net.minecraft.network.RegistryFriendlyByteBuf(io.netty.buffer.Unpooled.buffer(), h.getLevel().registryAccess());
+            try {
+                PatternTransferPayload.STREAM_CODEC.encode(buf, packet);
+                var decoded = PatternTransferPayload.STREAM_CODEC.decode(buf);
+                check(h, decoded.containerId() == 17 && decoded.transferId() == 42 && decoded.ingredients().size() == 9
+                    && decoded.ingredients().get(2).is(Items.OAK_LOG) && decoded.ingredients().get(0).isEmpty(), "Packet codec retains ghost-grid holes and request identity");
+            } finally { buf.release(); }
+            h.succeed();
+        });
         tests.put("upgrade_balance_bounds", h -> {
             for (var tier : CrafterTier.values()) {
                 check(h, MachineBalance.craftTicks(tier, 0) == tier.baseTicks && MachineBalance.craftTicks(tier, 8) == 1, "Speed range has the intended endpoints");
@@ -165,6 +214,12 @@ public final class CraftwrightGameTests {
         var pos = new BlockPos(2, 1, 2);
         h.setBlock(pos, advanced ? Craftwright.ADVANCED_CRAFTER.get() : Craftwright.CRAFTER.get());
         return h.getBlockEntity(pos, CrafterBlockEntity.class);
+    }
+    @SuppressWarnings("removal")
+    private static net.minecraft.server.level.ServerPlayer editorPlayer(GameTestHelper h, CrafterBlockEntity be) {
+        var player = h.makeMockServerPlayerInLevel();
+        player.setPos(be.getBlockPos().getX() + 0.5, be.getBlockPos().getY() + 0.5, be.getBlockPos().getZ() + 0.5);
+        return player;
     }
     private static void tick(GameTestHelper h, CrafterBlockEntity be, int ticks) {
         for (int i = 0; i < ticks; i++) CrafterBlockEntity.tick(h.getLevel(), be.getBlockPos(), be.getBlockState(), be);

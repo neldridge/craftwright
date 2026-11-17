@@ -44,6 +44,7 @@ public class CrafterScreen extends AbstractContainerScreen<CrafterMenu> {
         }
         updateButtons();
     }
+    public void showPatterns() { menu.view = 0; updateButtons(); }
     private void updateButtons() {
         save.visible = add.visible = delete.visible = auto.visible = menu.view == 0;
         save.active = menu.data.get(7) == 1 && menu.selected() < menu.capacity();

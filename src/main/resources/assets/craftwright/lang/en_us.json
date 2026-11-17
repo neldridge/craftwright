@@ -66,5 +66,8 @@
   "gui.craftwright.power_rate": "%s FE / working tick",
   "gui.craftwright.valid_short": "Valid recipe",
   "gui.craftwright.invalid_short": "Invalid recipe",
-  "gui.craftwright.side_hint": "Click a face to cycle its item transfer mode."
+  "gui.craftwright.side_hint": "Click a face to cycle its item transfer mode.",
+  "gui.craftwright.jei_locked": "Select an unlocked pattern before importing a recipe.",
+  "gui.craftwright.jei_unsupported": "This recipe does not expose a supported 3\u00d73 crafting grid.",
+  "gui.craftwright.jei_invalid": "These displayed ingredients do not form a valid crafting recipe."
 }

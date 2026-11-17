@@ -50,6 +50,7 @@ public final class Craftwright {
         BLOCKS.register(bus); ITEMS.register(bus); BLOCK_ENTITIES.register(bus); MENUS.register(bus); TABS.register(bus);
         container.registerConfig(ModConfig.Type.SERVER, CraftwrightConfig.SPEC);
         bus.addListener(this::capabilities);
+        bus.addListener(dev.neldridge.craftwright.network.PatternTransferPayload::register);
     }
     private void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.Item.BLOCK, CRAFTER_BE.get(), (be, side) -> be.itemsForSide(side));
